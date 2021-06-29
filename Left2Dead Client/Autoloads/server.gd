@@ -7,6 +7,7 @@ var ip = "103.102.46.178"
 var port = 1909
 
 var players = {}
+var players_ready
 
 var latency = 0
 var latencyArray = []
@@ -16,6 +17,7 @@ var decimalCollector :=0.0
 
 signal player_registered
 signal player_unregistered
+signal players_updated
 
 func _ready():
 	#connectToServer()
@@ -47,7 +49,7 @@ func sendCharState(charState) -> void:
 	rpc_unreliable_id(1, "getCharState", charState)
 	
 remote func getWorldState(worldState) -> void:
-	get_tree().get_root().get_node("Demo").updateWorldState(worldState)
+	get_tree().get_nodes_in_group("Map")[0].updateWorldState(worldState)
 	
 remote func register_player(id, new_player_data) -> void:
 	print_debug("Registering player: %s" %id)
@@ -60,15 +62,35 @@ remote func unregister_player(id) -> void:
 	players.erase(id)
 	emit_signal("player_unregistered")
 	# TODO: if game is ongoing,shud remove player gracefully!
+	var map = get_tree().get_nodes_in_group("Map")[0]
+	map.despawnPlayer(id)
 #	var demo = get_tree().get_root().get_node("Demo")
 #	demo.despawnPlayer(id)
+
+func setPlayerReady():
+	# function informs server that client is ready
+	rpc_id(1, "setPlayerReady")
+	
+func setPlayerNotReady():
+	# function informs server that client is not ready
+	rpc_id(1, "setPlayerNotReady")
+	
+remote func updatePlayersDict(newPlayersDict):
+	if get_tree().get_rpc_sender_id() != 1:
+		return
+	players = newPlayersDict
+	emit_signal("players_updated")
 	
 remote func startGame(mapSeed):
 	if get_tree().get_rpc_sender_id() != 1:
 		return
 	# TODO: server will send mapseed over!
-	var demo = get_tree().get_root().get_node("Demo")
-	demo.spawnPlayer(get_tree().get_network_unique_id(), Vector2(0,0))
+	var map = load("res://Maps/BaseMap.tscn").instance()
+	get_tree().get_root().add_child(map)
+	print_debug("Start Game!")
+	map.initMap(mapSeed)
+	for player in Server.players:
+		map.spawnPlayer(player, Vector2(0,0))
 	
 func _onServerDisconnected() -> void:
 	players.clear()

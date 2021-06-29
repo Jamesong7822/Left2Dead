@@ -5,15 +5,15 @@
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.14902, 0.27451, 0.32549, 1 )
 
-[sub_resource type="StyleBoxFlat" id=3]
+[sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0.219608, 0.0941176, 0.184314, 1 )
 
-[sub_resource type="DynamicFont" id=2]
+[sub_resource type="DynamicFont" id=3]
 size = 48
 font_data = ExtResource( 1 )
 
 [resource]
-default_font = SubResource( 2 )
+default_font = SubResource( 3 )
 Button/colors/font_color = Color( 0.905882, 0.435294, 0.317647, 1 )
 Button/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
 Button/colors/font_color_hover = Color( 0.956863, 0.635294, 0.380392, 1 )
@@ -24,4 +24,4 @@ Button/styles/disabled = null
 Button/styles/focus = null
 Button/styles/hover = SubResource( 1 )
 Button/styles/normal = SubResource( 1 )
-Button/styles/pressed = SubResource( 3 )
+Button/styles/pressed = SubResource( 2 )

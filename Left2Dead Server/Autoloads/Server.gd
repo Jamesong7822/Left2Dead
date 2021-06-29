@@ -32,7 +32,10 @@ func sendWorldState(worldState) -> void:
 remote func register_player(new_player_name) -> void:
 	var caller_id = get_tree().get_rpc_sender_id()
 	# add to players dict
-	players[caller_id] = new_player_name
+	var playerDict = {}
+	playerDict["name"] = new_player_name
+	playerDict["ready"] = false
+	players[caller_id] = playerDict
 	# add previously connected players to this new player
 	for player_id in players:
 		if player_id != caller_id:
@@ -45,6 +48,40 @@ puppetsync func unregister_player(id) -> void:
 	players.erase(id)
 	playerStates.erase(id)
 	print_debug("Client %s unregistered" %id)
+	
+func checkIfAllPlayersReady():
+	var numReady = 0
+	for player in players:
+		if players[player]["ready"]:
+			numReady += 1
+	print_debug("Players Ready: %s/%s" %[numReady, players.size()])
+	if numReady == players.size():
+		return true
+	return false
+	
+remote func setPlayerReady():
+	# function is an rpc call from client to tell server that they are ready
+	var clientID = get_tree().get_rpc_sender_id()
+	print_debug("Client: %s is ready!" %[clientID])
+	# update server players dict copy
+	players[clientID]["ready"] = true
+	# broadcast
+	rpc("updatePlayersDict", players)
+	# check if all players ready
+	if checkIfAllPlayersReady():
+		var mapSeed = randi()
+		rpc("startGame", mapSeed)
+		print_debug("Map Seed: %s" %mapSeed)
+	
+remote func setPlayerNotReady():
+	# function is an rpc call from client to tell server that they are not ready
+	var clientID = get_tree().get_rpc_sender_id()
+	print_debug("Client: %s is not ready!" %[clientID])
+	# update server players dict copy
+	players[clientID]["ready"] = false
+	# broadcast
+	rpc("updatePlayersDict", players)
+	
 	
 remote func getServerTime(clientTime):
 	var clientID = get_tree().get_rpc_sender_id()

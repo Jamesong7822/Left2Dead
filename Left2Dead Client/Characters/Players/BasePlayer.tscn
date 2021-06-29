@@ -8,6 +8,7 @@
 [node name="BasePlayer" groups=[
 "Players",
 ] instance=ExtResource( 1 )]
+collision_mask = 31
 script = ExtResource( 2 )
 charSpeed = 250
 Weapon = ExtResource( 4 )

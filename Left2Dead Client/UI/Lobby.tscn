@@ -89,14 +89,14 @@ size_flags_vertical = 3
 theme = SubResource( 3 )
 bbcode_enabled = true
 bbcode_text = "[center]
-p1
+[color=green] p1 [/color]
 p2
 [/center]
 
 
 "
 text = "
-p1
+ p1 
 p2
 
 
