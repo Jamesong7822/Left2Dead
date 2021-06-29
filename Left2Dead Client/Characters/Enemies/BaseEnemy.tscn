@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Characters/BaseCharacter.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Characters/Enemies/BaseEnemy.gd" type="Script" id=2]
+[ext_resource path="res://Characters/Enemies/Assets/zoimbie1_hold.png" type="Texture" id=3]
+
+[sub_resource type="CircleShape2D" id=1]
+
+[node name="BaseEnemy" instance=ExtResource( 1 )]
+collision_layer = 4
+collision_mask = 15
+script = ExtResource( 2 )
+charType = 1
+charSpeed = 75
+detectRadius = 250.0
+
+[node name="Sprite" parent="." index="1"]
+texture = ExtResource( 3 )
+
+[node name="DetectArea" type="Area2D" parent="." index="2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea" index="0"]
+shape = SubResource( 1 )
+
+[connection signal="body_entered" from="DetectArea" to="." method="_on_DetectArea_body_entered"]

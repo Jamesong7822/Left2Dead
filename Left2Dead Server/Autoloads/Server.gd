@@ -46,6 +46,13 @@ puppetsync func unregister_player(id) -> void:
 	playerStates.erase(id)
 	print_debug("Client %s unregistered" %id)
 	
+remote func getServerTime(clientTime):
+	var clientID = get_tree().get_rpc_sender_id()
+	rpc_id(clientID, "returnServerTime", OS.get_system_time_msecs(), clientTime)
+	
+remote func calcLatency(clientTime):
+	var clientID = get_tree().get_rpc_sender_id()
+	rpc_id(clientID, "returnLatency", clientTime)
 	
 func _onPeerConnected(player_id):
 	print_debug("User %s connected!" %player_id)

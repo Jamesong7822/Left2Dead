@@ -14,9 +14,9 @@ func _physics_process(delta) -> void:
 	defineCharState()
 		
 func defineCharState() -> void:
-	if get_network_master() == get_tree().get_network_unique_id():
+	if is_network_master():
 		var charState = {}
-		charState["T"] = OS.get_system_time_msecs()
+		charState["T"] = Server.clientClock
 		charState["P"] = get_global_position()
 		charState["R"] = rotation
 		Server.sendCharState(charState)
