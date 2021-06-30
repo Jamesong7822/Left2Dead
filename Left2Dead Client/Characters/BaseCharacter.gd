@@ -6,12 +6,24 @@ export(TYPE) var charType
 export var charName := ""
 export var charDesc := ""
 export var charSpeed :int
+export var charHealth :int
 
-puppet var puppet_pos := Vector2()
+var currentSpeed = charSpeed
+var currentHealth = charHealth
 
+signal take_damage
+
+func _ready() -> void:
+	pass
 
 func _physics_process(delta) -> void:
 	defineCharState()
+	
+remotesync func takeDamage(dmg) -> void:
+	# TODO: implement it server side to prevent cheating!
+	# currently exposed to clients for quicker prototyping
+	currentHealth -= dmg
+	emit_signal("take_damage")
 		
 func defineCharState() -> void:
 	if is_network_master():

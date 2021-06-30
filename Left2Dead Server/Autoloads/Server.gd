@@ -72,6 +72,8 @@ remote func setPlayerReady():
 		var mapSeed = randi()
 		rpc("startGame", mapSeed)
 		print_debug("Map Seed: %s" %mapSeed)
+		# start the game handler
+		$GameHandler.startTimer()
 	
 remote func setPlayerNotReady():
 	# function is an rpc call from client to tell server that they are not ready

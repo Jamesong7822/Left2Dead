@@ -6,13 +6,27 @@ export (int) var width
 var lastWorldStateTime = 0
 var worldStateBuffer = []
 
-var noise
+var terrainNoise
+var obstacleNoise
+
 
 func _ready():
 	pass
+
+	
+func _physics_process(delta) -> void:
+	interpolateWorldStates()
+	
+	
+func spawnEnemy(enemyPos:Vector2, target) -> void:
+	var e = Global.ENEMY.instance()
+	e.target = get_tree().get_nodes_in_group("Map")[0].get_node(str(target))
+	e.global_position = enemyPos
+	add_child(e)
 	
 func initMap(mapSeed):
-	noise = generateNoise(mapSeed)
+	terrainNoise = generateNoise(mapSeed)
+	obstacleNoise = generateNoise(mapSeed)
 	setupMap()
 	
 func generateNoise(mapSeed=0) -> OpenSimplexNoise:
@@ -27,18 +41,29 @@ func generateNoise(mapSeed=0) -> OpenSimplexNoise:
 	
 	return noise
 	
-func selectGroundTile(x, y):
+func selectGroundTile(x, y) -> int:
 	# x,y are in map coords
 	var world = $Navigation2D/Ground.map_to_world(Vector2(x, y))
 	# get the noise
-	var sample = noise.get_noise_2d(world.x, world.y)
+	var sample = terrainNoise.get_noise_2d(world.x, world.y)
 	if sample < -0.5:
 		return 2
 	elif sample < -0.1:
 		return 1
 	else:
 		return 0
+		
+func selectObstacleTile(x:int, y:int) -> int:
+	# x,y are in map coords
+	var world = $Navigation2D/Others.map_to_world(Vector2(x, y))
+	# get the noise
+	var sample = obstacleNoise.get_noise_2d(world.x, world.y)
+	if sample > 0.5 and sample < 0.55:
+		if randf() < 0.2:
+			var random_num = randi() % 4
+			return random_num
 
+	return -1
 	
 func setupMap():
 
@@ -47,14 +72,20 @@ func setupMap():
 	$Navigation2D/Ground.clear()
 	for x in range(-length/2, length/2):
 		for y in range(-width/2, width/2):
+			# fill in the terrain
 			var id = selectGroundTile(x, y)
 			$Navigation2D/Ground.set_cell(x,y,id)
-	$Navigation2D/Ground.update_bitmask_region()
-#		for x in range(-length/2, length/2):
-#			for y in range(-width/2, width/2):
-#				if $Navigation2D/Others.get_cell(x,y) != TileMap.INVALID_CELL:
-#					removeNavMesh(x, y, $Navigation2D/Others, $Navigation2D/Others.get_cell(x,y), grass_no_nav_id)
-				#$Navigation2D/Ground.set_cell(x,y,grass_no_nav_id)
+			# fill in the obstacles
+			id = selectObstacleTile(x,y)
+			if id != -1:
+				$Navigation2D/Others.set_cell(x,y,id)
+	
+	# loop through obstacles and remove navmesh!
+	for x in range(-length/2, length/2):
+		for y in range(-width/2, width/2):
+			if $Navigation2D/Others.get_cell(x,y) != TileMap.INVALID_CELL:
+				removeNavMesh(x, y, $Navigation2D/Others, $Navigation2D/Others.get_cell(x,y), grass_no_nav_id)
+				$Navigation2D/Ground.set_cell(x,y,grass_no_nav_id)
 
 func removeNavMesh(x, y, tileMap, tileID, replaceWithTileID):
 	var regionRect = tileMap.tile_set.tile_get_region(tileID)
@@ -73,9 +104,6 @@ func spawnPlayer(id, spawn_pos) -> void:
 func despawnPlayer(id) -> void:
 	print_debug("Despawning player %s" %id)
 	get_node(str(id)).queue_free()
-	
-func _physics_process(delta) -> void:
-	interpolateWorldStates()
 	
 func updateWorldState(worldState) -> void:
 	if worldState["T"] > lastWorldStateTime:

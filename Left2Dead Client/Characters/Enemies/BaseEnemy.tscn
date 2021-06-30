@@ -6,12 +6,14 @@
 
 [sub_resource type="CircleShape2D" id=1]
 
-[node name="BaseEnemy" instance=ExtResource( 1 )]
+[node name="BaseEnemy" groups=[
+"Enemy",
+] instance=ExtResource( 1 )]
 collision_layer = 4
 collision_mask = 31
 script = ExtResource( 2 )
 charType = 1
-charSpeed = 75
+charSpeed = 125
 detectRadius = 250.0
 
 [node name="Sprite" parent="." index="1"]
@@ -22,4 +24,8 @@ texture = ExtResource( 3 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea" index="0"]
 shape = SubResource( 1 )
 
+[node name="RegenPathTimer" type="Timer" parent="." index="3"]
+autostart = true
+
 [connection signal="body_entered" from="DetectArea" to="." method="_on_DetectArea_body_entered"]
+[connection signal="timeout" from="RegenPathTimer" to="." method="_on_RegenPathTimer_timeout"]

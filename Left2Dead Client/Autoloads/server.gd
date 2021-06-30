@@ -91,6 +91,12 @@ remote func startGame(mapSeed):
 	map.initMap(mapSeed)
 	for player in Server.players:
 		map.spawnPlayer(player, Vector2(0,0))
+		
+remote func spawnEnemy(coords:Vector2, target:int):
+	if get_tree().get_rpc_sender_id() != 1:
+		return
+	var map = get_tree().get_nodes_in_group("Map")[0]
+	map.spawnEnemy(coords, target)
 	
 func _onServerDisconnected() -> void:
 	players.clear()
