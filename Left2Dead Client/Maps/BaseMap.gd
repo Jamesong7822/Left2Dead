@@ -18,9 +18,11 @@ func _physics_process(delta) -> void:
 	interpolateWorldStates()
 	
 	
-func spawnEnemy(enemyPos:Vector2, target) -> void:
+func spawnEnemy(enemyPos:Vector2, target:int, nodeOwner) -> void:
 	var e = Global.ENEMY.instance()
-	e.target = get_tree().get_nodes_in_group("Map")[0].get_node(str(target))
+	e.nodeOwner = nodeOwner
+	if target != 0:
+		e.target = get_tree().get_nodes_in_group("Map")[0].get_node(str(target))
 	e.global_position = enemyPos
 	add_child(e)
 	
@@ -103,6 +105,9 @@ func spawnPlayer(id, spawn_pos) -> void:
 
 func despawnPlayer(id) -> void:
 	print_debug("Despawning player %s" %id)
+	for e in get_tree().get_nodes_in_group("Enemy"):
+		if int(e.target.name) == id:
+			e.target = null 
 	get_node(str(id)).queue_free()
 	
 func updateWorldState(worldState) -> void:

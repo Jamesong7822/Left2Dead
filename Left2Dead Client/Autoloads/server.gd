@@ -64,8 +64,10 @@ remote func unregister_player(id) -> void:
 	# TODO: if game is ongoing,shud remove player gracefully!
 	var map = get_tree().get_nodes_in_group("Map")[0]
 	map.despawnPlayer(id)
-#	var demo = get_tree().get_root().get_node("Demo")
-#	demo.despawnPlayer(id)
+
+func updateServerEnemyCounter() -> void:
+	if get_tree().network_peer:
+		rpc_id(1, "updateEnemyCounter")
 
 func setPlayerReady():
 	# function informs server that client is ready
@@ -91,17 +93,21 @@ remote func startGame(mapSeed):
 	map.initMap(mapSeed)
 	for player in Server.players:
 		map.spawnPlayer(player, Vector2(0,0))
+	# remove lobby
+	get_tree().get_root().get_node("Lobby").queue_free()
 		
-remote func spawnEnemy(coords:Vector2, target:int):
+remote func spawnEnemy(coords:Vector2, target:int, nodeOwner):
 	if get_tree().get_rpc_sender_id() != 1:
 		return
 	var map = get_tree().get_nodes_in_group("Map")[0]
-	map.spawnEnemy(coords, target)
+	map.spawnEnemy(coords, target, nodeOwner)
 	
 func _onServerDisconnected() -> void:
 	players.clear()
 	print_debug("Server Disconnected")
-	connectToServer()
+	get_tree().set_network_peer(null)
+	get_tree().get_nodes_in_group("Map")[0].queue_free()
+	get_tree().change_scene("res://UI/Menu.tscn")
 	
 func _onConnectionFailed() -> void:
 	print_debug("Failed to connect!")

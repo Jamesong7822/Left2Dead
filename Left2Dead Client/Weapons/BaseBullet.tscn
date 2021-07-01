@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Weapons/Assets/bulletBlue.png" type="Texture" id=1]
 [ext_resource path="res://Weapons/BaseBullet.gd" type="Script" id=2]
+[ext_resource path="res://Characters/Particles/BloodParticles.tscn" type="PackedScene" id=3]
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 2.28618
@@ -12,6 +13,7 @@ collision_layer = 8
 collision_mask = 22
 script = ExtResource( 2 )
 speed = 20.0
+particleEffect = ExtResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="."]
 modulate = Color( 0, 0, 0, 1 )

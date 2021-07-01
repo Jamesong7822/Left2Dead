@@ -16,10 +16,9 @@ func centralizeText() -> void:
 	# function centralizes the words
 	var rect = $Label.rect_size
 	$Label.rect_position.x = -rect.x/2
-	$Label.rect_position.y = -50
+	$Label.rect_position.y = -60
 	
 func setText(newText) -> void:
-	print_debug("Setting Text: %s" %newText)
 	$Label.text = newText
 	# recentralize
 	centralizeText()

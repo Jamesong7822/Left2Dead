@@ -1,10 +1,14 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Characters/BaseCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Characters/Enemies/BaseEnemy.gd" type="Script" id=2]
 [ext_resource path="res://Characters/Enemies/Assets/zoimbie1_hold.png" type="Texture" id=3]
 
 [sub_resource type="CircleShape2D" id=1]
+radius = 300.0
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 20.0
 
 [node name="BaseEnemy" groups=[
 "Enemy",
@@ -14,7 +18,12 @@ collision_mask = 31
 script = ExtResource( 2 )
 charType = 1
 charSpeed = 125
+charHealth = 100
 detectRadius = 250.0
+knockback = 250
+
+[node name="CollisionShape2D" parent="." index="0"]
+visible = false
 
 [node name="Sprite" parent="." index="1"]
 texture = ExtResource( 3 )
@@ -22,10 +31,26 @@ texture = ExtResource( 3 )
 [node name="DetectArea" type="Area2D" parent="." index="2"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea" index="0"]
+visible = false
 shape = SubResource( 1 )
 
 [node name="RegenPathTimer" type="Timer" parent="." index="3"]
 autostart = true
 
+[node name="AttackArea" type="Area2D" parent="." index="6"]
+position = Vector2( 20, 0 )
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" index="0"]
+visible = false
+shape = SubResource( 2 )
+
+[node name="AttackTimer" type="Timer" parent="." index="8"]
+wait_time = 0.1
+one_shot = true
+
 [connection signal="body_entered" from="DetectArea" to="." method="_on_DetectArea_body_entered"]
 [connection signal="timeout" from="RegenPathTimer" to="." method="_on_RegenPathTimer_timeout"]
+[connection signal="body_entered" from="AttackArea" to="." method="_on_AttackArea_body_entered"]
+[connection signal="timeout" from="AttackTimer" to="." method="_on_AttackTimer_timeout"]

@@ -1,5 +1,7 @@
 extends Node2D
 
+export (int) var damage
+export (int) var knockback
 export (float) var fireRate = 0.5
 export (int) var count = 1
 export (float) var spread
@@ -11,22 +13,32 @@ func _ready():
 	pass
 	$Timer.wait_time = fireRate
 
-remote func fire(firePos, fireAt) -> void:
+func fire(firePos, fireAt) -> void:
 	if canFire:
 		if $Timer.is_stopped():
 			$Timer.start()
 		canFire = false
-		for i in range(count):
+		for _i in range(count):
 			var b = Bullet.instance()
-			b.position = firePos
+			get_tree().get_root().add_child(b)
 			var fireDir = (fireAt - firePos).normalized()
 			# spread firedir 
 			fireDir = fireDir.rotated((randf()*2-1)*spread)
-			b.setDir(fireDir)
+			b.init(firePos, damage, knockback, fireDir)
+			
+remote func syncFire(firePos, fireAt) -> void:
+	if canFire:
+		if $Timer.is_stopped():
+			$Timer.start()
+		canFire = false
+		for _i in range(count):
+			var b = Bullet.instance()
 			get_tree().get_root().add_child(b)
-			b.look_at(firePos + fireDir)
-		
-
+			var fireDir = (fireAt - firePos).normalized()
+			# spread firedir 
+			fireDir = fireDir.rotated((randf()*2-1)*spread)
+			# if not u owning the bullet, we remove both dmg n knockback force
+			b.init(firePos, 0, 0, fireDir)
 
 func _on_Timer_timeout():
 	canFire = true

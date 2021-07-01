@@ -5,6 +5,8 @@
 
 [node name="BaseWeapon" type="Node2D"]
 script = ExtResource( 1 )
+damage = 10
+knockback = 200
 fireRate = 0.25
 spread = 0.15
 Bullet = ExtResource( 2 )

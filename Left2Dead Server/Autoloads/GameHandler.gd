@@ -1,6 +1,6 @@
 extends Node
 
-var maxEnemies = 10
+var maxEnemies = 30
 var spawnWithin = Vector2(140, 80)
 var enemyCount = 0
 
@@ -33,17 +33,35 @@ func generateRandomCoords() -> Vector2:
 	enemyPos = Vector2(randomX, randomY) + avgPos
 	return enemyPos
 	
+func _getAlivePlayers():
+	var alivePlayers = []
+	for player in server.players.keys():
+		if server.playerStates[player]["H"] > 0:
+			alivePlayers.append(player)
+	if len(alivePlayers) != 0:
+		return alivePlayers
+	else:
+		return null
+	
 func _onTimerTimeout():
 	# do spawn of enemy
 	if enemyCount > maxEnemies:
 		return
-	pass
+	t.wait_time -= 0.5
+	if t.wait_time < 3:
+		t.wait_time = 3
 	# random enemy pos
 	var enemyPos = generateRandomCoords()
 	if server.players.size() != 0:
-		var target = server.players.keys()[randi() % server.players.size()]
+		var alivePlayers = _getAlivePlayers()
+		print_debug("Alive Players: %s" %alivePlayers)
+		var target = 0
+		var nodeOwner = 0
+		if alivePlayers:
+			target = alivePlayers[randi() % len(alivePlayers)]
+			nodeOwner = server.players[0]
 		print_debug("Spawn Enemy at: %s with target: %s" %[enemyPos, target])
-		server.rpc("spawnEnemy", enemyPos, target)
+		server.rpc("spawnEnemy", enemyPos, target, nodeOwner)
 	
 		enemyCount += 1
 	

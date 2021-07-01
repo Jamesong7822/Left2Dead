@@ -8,9 +8,10 @@
 [node name="BasePlayer" groups=[
 "Players",
 ] instance=ExtResource( 1 )]
-collision_mask = 31
+collision_mask = 63
 script = ExtResource( 2 )
 charSpeed = 250
+charHealth = 100
 Weapon = ExtResource( 4 )
 
 [node name="CollisionShape2D" parent="." index="0"]
@@ -21,6 +22,12 @@ texture = ExtResource( 3 )
 
 [node name="Camera2D" type="Camera2D" parent="." index="2"]
 current = true
+limit_left = -2240
+limit_top = -1280
+limit_right = 2240
+limit_bottom = 1280
+limit_smoothed = true
+smoothing_enabled = true
 
 [node name="FireFrom" type="Position2D" parent="." index="3"]
 position = Vector2( 29.0328, 9.34389 )

@@ -49,6 +49,9 @@ puppetsync func unregister_player(id) -> void:
 	playerStates.erase(id)
 	print_debug("Client %s unregistered" %id)
 	
+remote func updateEnemyCounter() -> void:
+	$GameHandler.enemyCount -= 1
+	
 func checkIfAllPlayersReady():
 	var numReady = 0
 	for player in players:
