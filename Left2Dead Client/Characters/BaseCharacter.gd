@@ -69,7 +69,7 @@ func die() -> void:
 			rpc_id(-1, "syncedQueueFree")
 			
 remotesync func syncedQueueFree() -> void:
-	queue_free()
+	call_deferred("queue_free")
 	
 remotesync func takeDamage(dmg: int, knockbackDir: Vector2, knockbackForce: int) -> void:
 	# TODO: implement it server side to prevent cheating!

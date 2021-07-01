@@ -18,8 +18,10 @@ func _physics_process(delta) -> void:
 	interpolateWorldStates()
 	
 	
-func spawnEnemy(enemyPos:Vector2, target:int, nodeOwner) -> void:
+func spawnEnemy(enemyPos:Vector2, target:int, nodeOwner, id:int) -> void:
 	var e = Global.ENEMY.instance()
+	e.name = str(id)
+	print ("nodeOwner: %s" %nodeOwner)
 	e.nodeOwner = nodeOwner
 	if target != 0:
 		e.target = get_tree().get_nodes_in_group("Map")[0].get_node(str(target))

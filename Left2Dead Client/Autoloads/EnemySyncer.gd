@@ -28,20 +28,19 @@ func useEnemyStates():
 	for e in get_tree().get_nodes_in_group("Enemy"):
 		if enemyStates.has(e.name):
 			e.global_position = enemyStates[e.name]["P"]
-			e.moveDir = enemyStates[e.name]["D"]
+			e.rotation = enemyStates[e.name]["R"]
 	
 func createEnemyStates():
 	enemyStates = {}
 	if len(get_tree().get_nodes_in_group("Enemy")) == 0:
 		return
-	if not nodeOwner:
-		nodeOwner = get_tree().get_nodes_in_group("Enemy")[0].nodeOwner
+	nodeOwner = get_tree().get_nodes_in_group("Enemy")[0].nodeOwner
 	if get_tree().get_network_unique_id() != nodeOwner:
 		return
 	for e in get_tree().get_nodes_in_group("Enemy"):
 		var dict = {}
 		dict["P"] = e.global_position
-		dict["D"] = e.moveDir
+		dict["R"] = e.rotation
 		enemyStates[e.name] = dict
 		
 func _onTimerTimeout():

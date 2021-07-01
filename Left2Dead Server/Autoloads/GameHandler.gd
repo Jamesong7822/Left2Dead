@@ -7,6 +7,7 @@ var enemyCount = 0
 onready var server = get_parent()
 
 var t
+var id = 0
 
 func _ready():
 	t = Timer.new()
@@ -59,9 +60,10 @@ func _onTimerTimeout():
 		var nodeOwner = 0
 		if alivePlayers:
 			target = alivePlayers[randi() % len(alivePlayers)]
-			nodeOwner = server.players[0]
-		print_debug("Spawn Enemy at: %s with target: %s" %[enemyPos, target])
-		server.rpc("spawnEnemy", enemyPos, target, nodeOwner)
+			nodeOwner = server.players.keys()[0]
+		print_debug("Spawn Enemy at: %s Target: %s Owner: %s ID: %s" %[enemyPos, target, nodeOwner, id])
+		server.rpc("spawnEnemy", enemyPos, target, nodeOwner, id)
 	
 		enemyCount += 1
+		id += 1
 	

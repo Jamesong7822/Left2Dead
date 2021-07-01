@@ -96,11 +96,11 @@ remote func startGame(mapSeed):
 	# remove lobby
 	get_tree().get_root().get_node("Lobby").queue_free()
 		
-remote func spawnEnemy(coords:Vector2, target:int, nodeOwner):
+remote func spawnEnemy(coords:Vector2, target:int, nodeOwner, id:int):
 	if get_tree().get_rpc_sender_id() != 1:
 		return
 	var map = get_tree().get_nodes_in_group("Map")[0]
-	map.spawnEnemy(coords, target, nodeOwner)
+	map.spawnEnemy(coords, target, nodeOwner, id)
 	
 func _onServerDisconnected() -> void:
 	players.clear()
