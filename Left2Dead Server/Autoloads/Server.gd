@@ -48,6 +48,9 @@ puppetsync func unregister_player(id) -> void:
 	players.erase(id)
 	playerStates.erase(id)
 	print_debug("Client %s unregistered" %id)
+	if players.size() == 0:
+		# no more players
+		$GameHandler.stop()
 	
 remote func updateEnemyCounter() -> void:
 	$GameHandler.enemyCount -= 1
@@ -76,7 +79,7 @@ remote func setPlayerReady():
 		rpc("startGame", mapSeed)
 		print_debug("Map Seed: %s" %mapSeed)
 		# start the game handler
-		$GameHandler.startTimer()
+		$GameHandler.start()
 	
 remote func setPlayerNotReady():
 	# function is an rpc call from client to tell server that they are not ready

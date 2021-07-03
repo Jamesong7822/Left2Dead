@@ -26,18 +26,6 @@ func _physics_process(delta):
 	checkValidTarget()
 	updateDebugLabel()
 	stateHandler()
-#	if get_tree().get_network_unique_id() == nodeOwner:
-#		for player in get_tree().get_network_connected_peers():
-#			if player != 1 and player != nodeOwner:
-#				rpc_id(player, "syncEnemy", global_position, moveDir)
-	
-#remote func syncEnemy(pos, dir):
-#	var senderID = get_tree().get_rpc_sender_id()
-#	if senderID != nodeOwner:
-#		return
-#	global_position = pos
-#	moveDir = dir
-		
 		
 func checkValidTarget():
 	if not target:

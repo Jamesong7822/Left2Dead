@@ -102,6 +102,13 @@ remote func spawnEnemy(coords:Vector2, target:int, nodeOwner, id:int):
 	var map = get_tree().get_nodes_in_group("Map")[0]
 	map.spawnEnemy(coords, target, nodeOwner, id)
 	
+remote func spawnWeapon(wepID, wepPos):
+	pass
+	var a = Global.WEP_PICKUP.instance()
+	get_tree().get_nodes_in_group("Map")[0].add_child(a)
+	a.global_position = wepPos
+	a._setType(wepID)
+	
 func _onServerDisconnected() -> void:
 	players.clear()
 	print_debug("Server Disconnected")

@@ -2,6 +2,7 @@ extends "res://Characters/BaseCharacter.gd"
 
 export (PackedScene) var Weapon
 
+
 var weapon
 
 func _ready():
@@ -11,7 +12,16 @@ func _ready():
 		
 	# attach the weapon
 	weapon = Weapon.instance()
+	weapon.name = "weapon"
 	add_child(weapon)
+	
+	$CharacterLabel.call_deferred("setText", name)
+	
+	# make HUD
+	if is_network_master():
+		var hud = Global.HUD.instance()
+		hud.name = "HUD"
+		add_child(hud)
 	
 func _physics_process(delta):
 	if currentEffect == EFFECT.NORMAL:
@@ -37,11 +47,10 @@ func handleShooting() -> void:
 	if currentGameState == GAME_STATE.DEAD:
 		return
 	if Input.is_action_pressed("shoot"):
-		weapon.fire($FireFrom.global_position, get_global_mouse_position())
-		# tell other connected clients that you should be firing
-		weapon.rpc_id(-1, "syncFire", $FireFrom.global_position, get_global_mouse_position())
-			
-
+		weapon.rpc_id(-1, "fire", $FireFrom.global_position, get_global_mouse_position(), get_tree().get_network_unique_id())
+	elif Input.is_action_pressed("reload"):
+		weapon._reload()
+	
 func handleMovement() -> void:
 	pass
 	if not is_network_master():
@@ -61,3 +70,10 @@ func handleMovement() -> void:
 	moveDir = moveDir.normalized()
 	# rotate to face mouse
 	look_at(get_global_mouse_position())
+	
+remotesync func switchWeaponTo(newWeaponInstance) -> void:
+	get_node("weapon").name = "todelete"
+	weapon = load(newWeaponInstance).instance()
+	weapon.name = "weapon"
+	add_child(weapon)
+	get_node("todelete").call_deferred("queue_free")

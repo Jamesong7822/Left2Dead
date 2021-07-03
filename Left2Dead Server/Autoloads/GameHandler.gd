@@ -1,6 +1,6 @@
 extends Node
 
-var maxEnemies = 30
+var maxEnemies = 20
 var spawnWithin = Vector2(140, 80)
 var enemyCount = 0
 
@@ -8,6 +8,7 @@ onready var server = get_parent()
 
 var t
 var id = 0
+var wepTimer
 
 func _ready():
 	t = Timer.new()
@@ -16,11 +17,31 @@ func _ready():
 	t.one_shot = false
 	t.wait_time = 10
 	t.connect("timeout", self, "_onTimerTimeout")
+	_initWepTimer()
 	
-func startTimer() -> void:
+func _initWepTimer():
+	wepTimer = Timer.new()
+	add_child(wepTimer)
+	wepTimer.autostart = false
+	wepTimer.one_shot = false
+	wepTimer.wait_time = 5
+	wepTimer.connect("timeout", self, "_onWepTimerTimeout")
+	
+func start() ->void:
 	if t.is_stopped():
 		print_debug("Enemy Timer Started!")
 		t.start()
+		print_debug("Weapon Timer Started!")
+		wepTimer.start()
+		
+func stop() -> void:
+	print_debug("Stopping Game Handler")
+	t.stop()
+	wepTimer.stop()
+	enemyCount = 0
+	t.wait_time = 10
+	wepTimer.wait_time = 5
+	id = 0
 		
 func generateRandomCoords() -> Vector2:
 	var enemyPos = Vector2()
@@ -66,4 +87,15 @@ func _onTimerTimeout():
 	
 		enemyCount += 1
 		id += 1
+		
+func _generateWepCoords():
+	var randomX = (randf()*2-1) * spawnWithin.x/2 * 32
+	var randomY = (randf()*2-1) * spawnWithin.y/2 * 32
+	return Vector2(randomX, randomY)
 	
+func _onWepTimerTimeout():
+	var wepPos = _generateWepCoords()
+	# decide weapon to spawn
+	var wepID = randi() % 2
+	print_debug("Spawn weapon id: %s at %s" %[wepID, wepPos])
+	server.rpc("spawnWeapon", wepID, wepPos)

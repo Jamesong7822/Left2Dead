@@ -1,17 +1,31 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Weapons/BaseWeapon.gd" type="Script" id=1]
 [ext_resource path="res://Weapons/BaseBullet.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Weapons/Assets/pistol.wav" type="AudioStream" id=3]
+[ext_resource path="res://Weapons/Assets/pistol_reload.wav" type="AudioStream" id=4]
 
 [node name="BaseWeapon" type="Node2D"]
 script = ExtResource( 1 )
-damage = 10
+weaponName = "Pistol"
+damage = 25
 knockback = 200
 fireRate = 0.25
-spread = 0.15
+spread = 0.05
 Bullet = ExtResource( 2 )
+clipSize = 12
+totalAmmo = 100
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
 
+[node name="FireSFX" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 3 )
+volume_db = -7.0
+
+[node name="ReloadSFX" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 4 )
+volume_db = -7.0
+
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+[connection signal="finished" from="ReloadSFX" to="." method="_on_ReloadSFX_finished"]
