@@ -3,7 +3,5 @@ extends Particles2D
 
 func _ready():
 	pass
-
-func _process(delta):
-	if emitting == false:
-		queue_free()
+	yield(get_tree().create_timer(1), "timeout")
+	queue_free()
