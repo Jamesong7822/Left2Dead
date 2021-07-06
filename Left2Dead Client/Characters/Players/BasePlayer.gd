@@ -77,3 +77,5 @@ remotesync func switchWeaponTo(newWeaponInstance) -> void:
 	weapon.name = "weapon"
 	add_child(weapon)
 	get_node("todelete").call_deferred("queue_free")
+	# update the weapon HUD
+	$HUD.initWeaponHUD()
