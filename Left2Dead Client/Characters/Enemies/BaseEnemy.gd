@@ -23,9 +23,10 @@ func _ready():
 	call_deferred("generatePath")
 
 func _physics_process(delta):
-	checkValidTarget()
-	updateDebugLabel()
-	stateHandler()
+	if nodeOwner == get_tree().get_network_unique_id():
+		checkValidTarget()
+		updateDebugLabel()
+		stateHandler()
 		
 func checkValidTarget():
 	if not target:
